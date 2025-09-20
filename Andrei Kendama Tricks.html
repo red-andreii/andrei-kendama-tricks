@@ -1,0 +1,707 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Andrei Kendama Tricks</title>
+<style>
+  :root{
+    --bg:#0f1724;
+    --card:#0b1220;
+    --glass: rgba(255,255,255,0.03);
+    --accent: #5eead4;
+    --easy: #34d399;   /* green */
+    --medium: #fb923c; /* orange */
+    --hard: #f87171;   /* red */
+    --glass-2: rgba(255,255,255,0.02);
+    --text: #eef2ff;
+  }
+  *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Helvetica Neue",Arial;}
+  body{
+    margin:0;
+    min-height:100vh;
+    color:var(--text);
+    background:
+      radial-gradient(800px 400px at 10% 10%, rgba(99,102,241,0.08), transparent 10%),
+      radial-gradient(700px 300px at 90% 90%, rgba(99,102,241,0.05), transparent 12%),
+      linear-gradient(180deg, #071021 0%, #071226 100%);
+    padding:24px;
+    display:flex;
+    gap:20px;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  header{
+    display:flex;
+    gap:20px;
+    align-items:center;
+    width:100%;
+    max-width:1100px;
+    justify-content:space-between;
+  }
+  h1{margin:0;font-size:20px;display:flex;gap:12px;align-items:center;}
+  .logo{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    font-weight:700;
+    letter-spacing:0.6px;
+  }
+  .logo .ball{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,#a78bfa,#60a5fa);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 18px rgba(99,102,241,0.18);}
+
+  main{
+    width:100%;
+    max-width:1100px;
+    display:grid;
+    grid-template-columns: 360px 1fr;
+    gap:20px;
+    align-items:start;
+  }
+
+  /* left column */
+  .panel{
+    background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:14px;padding:16px;
+    box-shadow: 0 6px 30px rgba(2,6,23,0.7);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+
+  .modes{
+    display:flex;
+    gap:8px;
+    margin-bottom:12px;
+  }
+  .mode-btn{
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+    text-align:center;
+    cursor:pointer;
+    font-weight:600;
+    user-select:none;
+    transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .mode-btn.locked{
+    opacity:0.4;
+    cursor:not-allowed;
+    filter:grayscale(.2);
+  }
+  .mode-btn:hover{transform:translateY(-3px)}
+  .mode-easy{background:linear-gradient(120deg, rgba(52,211,153,0.12), rgba(99,102,241,0.03)); border:1px solid rgba(52,211,153,0.12)}
+  .mode-medium{background:linear-gradient(120deg, rgba(251,146,60,0.12), rgba(99,102,241,0.03)); border:1px solid rgba(251,146,60,0.12)}
+  .mode-hard{background:linear-gradient(120deg, rgba(248,113,113,0.12), rgba(99,102,241,0.03)); border:1px solid rgba(248,113,113,0.12)}
+
+  .roll-area{
+    margin-top:12px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    align-items:center;
+  }
+
+  .wheel{
+    width:260px;height:260px;border-radius:50%;
+    display:grid;place-items:center;
+    position:relative;
+    overflow:hidden;
+    background:conic-gradient(from 0deg,
+      rgba(52,211,153,0.12) 0 120deg,
+      rgba(251,146,60,0.12) 120deg 240deg,
+      rgba(248,113,113,0.12) 240deg 360deg);
+    box-shadow: 0 10px 40px rgba(2,6,23,0.6);
+    border:1px solid rgba(255,255,255,0.03);
+  }
+
+  .wheel .needle{
+    position:absolute;
+    top:-12px;
+    left:calc(50% - 6px);
+    width:0;height:0;border-left:6px solid transparent;border-right:6px solid transparent;border-bottom:18px solid var(--text);
+    filter:drop-shadow(0 6px 8px rgba(0,0,0,0.6));
+    transform-origin:50% 100%;
+    z-index:6;
+  }
+
+  .wheel .center{
+    width:92px;height:92px;border-radius:50%;background:var(--glass-2);display:flex;align-items:center;justify-content:center;flex-direction:column;backdrop-filter: blur(6px);
+  }
+  .wheel .center .rolled{
+    font-weight:700;font-size:14px;text-align:center;padding:6px;
+  }
+  .roll-control{
+    display:flex;gap:12px;
+    align-items:center;
+  }
+  button.primary{
+    background:linear-gradient(90deg,#7c3aed,#06b6d4);border:none;padding:10px 16px;border-radius:10px;color:white;font-weight:700;cursor:pointer;
+    box-shadow: 0 8px 24px rgba(99,102,241,0.18);
+  }
+  button.secondary{
+    background:transparent;border:1px solid rgba(255,255,255,0.06);padding:10px 12px;border-radius:10px;color:var(--text);cursor:pointer;
+  }
+
+  .progress{
+    width:100%;
+    display:flex;
+    gap:8px;
+    align-items:center;
+    justify-content:space-between;
+  }
+
+  .progress .bar{
+    flex:1;
+    height:12px;border-radius:999px;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.02));
+    overflow:hidden;border:1px solid rgba(255,255,255,0.02);
+  }
+  .progress .bar > i{
+    display:block;height:100%;width:0%;
+    background:linear-gradient(90deg, rgba(99,102,241,0.1), rgba(96,165,250,0.2));
+    transition:width .6s ease;
+  }
+
+  /* right column */
+  .content{
+    display:flex;flex-direction:column;gap:14px;
+  }
+  .trick-card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.015));
+    padding:14px;border-radius:12px;border:1px solid rgba(255,255,255,0.03);display:flex;gap:12px;align-items:flex-start;
+  }
+  .trick-card .icon{width:68px;height:68px;border-radius:10px;display:grid;place-items:center;font-weight:700;font-size:18px}
+  .trick-card .meta{flex:1}
+  .trick-card .meta h3{margin:0 0 6px 0}
+  .trick-card .meta p{margin:0;color:rgba(255,255,255,0.75)}
+  .trick-card .actions{display:flex;gap:8px;align-items:center}
+
+  .locked-overlay{
+    position:absolute;inset:0;background:linear-gradient(180deg, rgba(3,7,18,0.6), rgba(0,0,0,0.6));
+    display:grid;place-items:center;border-radius:12px;color:#fff;font-weight:700;
+  }
+
+  /* difficulty color accents */
+  .accent-easy{background:linear-gradient(180deg, rgba(52,211,153,0.12), rgba(52,211,153,0.06)); border-left:4px solid var(--easy); color:var(--easy)}
+  .accent-medium{background:linear-gradient(180deg, rgba(251,146,60,0.12), rgba(251,146,60,0.06)); border-left:4px solid var(--medium); color:var(--medium)}
+  .accent-hard{background:linear-gradient(180deg, rgba(248,113,113,0.12), rgba(248,113,113,0.06)); border-left:4px solid var(--hard); color:var(--hard)}
+
+  /* small animations */
+  .spin {
+    animation:spin 0.7s cubic-bezier(.2,.8,.2,1) infinite;
+  }
+  @keyframes spin {0%{transform:rotate(0)}100%{transform:rotate(360deg)}}
+
+  .pulse {
+    animation:pulse 1.2s ease-in-out infinite;
+  }
+  @keyframes pulse {0%{transform:scale(1)}50%{transform:scale(1.06)}100%{transform:scale(1)}}
+
+  .confetti-canvas{
+    position:fixed;left:0;top:0;width:100%;height:100%;pointer-events:none;z-index:9999;
+  }
+
+  /* trick steps styling */
+  .steps{margin-top:8px;padding-left:16px}
+  .steps li{margin-bottom:6px}
+
+  /* meter */
+  .meter{
+    width:100%;
+    height:18px;
+    margin-top:6px;
+    background:linear-gradient(90deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:999px;overflow:hidden;border:1px solid rgba(255,255,255,0.02);
+  }
+  .meter > i{height:100%;display:block;width:0%;background:linear-gradient(90deg,#7c3aed,#06b6d4);transition:width .8s cubic-bezier(.2,.9,.2,1) }
+
+  /* footer */
+  footer{width:100%;max-width:1100px;color:rgba(255,255,255,0.6);font-size:13px;display:flex;justify-content:space-between;align-items:center;padding:4px 0 0 0}
+  a.small{color:#9ca3ff;text-decoration:none;font-weight:600}
+  /* responsiveness */
+  @media (max-width:960px){
+    main{grid-template-columns: 1fr; padding-bottom:40px;}
+    .wheel{width:220px;height:220px}
+  }
+</style>
+</head>
+<body>
+<canvas id="confetti" class="confetti-canvas" style="display:none"></canvas>
+
+<header>
+  <h1 class="logo">
+    <div class="ball">AK</div>
+    Andrei Kendama Tricks
+  </h1>
+  <div style="text-align:right;color:rgba(255,255,255,0.75)">
+    <div style="font-weight:700">Pick • Roll • Land</div>
+    <div style="font-size:13px;color:rgba(255,255,255,0.5)">Complete 4 to unlock the next mode</div>
+  </div>
+</header>
+
+<main>
+  <!-- left panel -->
+  <aside class="panel" id="leftPanel">
+    <div style="font-weight:800;font-size:15px;margin-bottom:8px">Modes</div>
+    <div class="modes">
+      <div id="btn-easy" class="mode-btn mode-easy">EASY</div>
+      <div id="btn-medium" class="mode-btn mode-medium locked">MEDIUM</div>
+      <div id="btn-hard" class="mode-btn mode-hard locked">HARD</div>
+    </div>
+
+    <div class="roll-area">
+      <div class="wheel" id="wheel" aria-hidden="true">
+        <div class="needle" id="needle"></div>
+        <div class="center">
+          <div style="font-size:11px;color:rgba(255,255,255,0.7)">Rolled</div>
+          <div class="rolled" id="rolledText">—</div>
+        </div>
+      </div>
+
+      <div class="roll-control">
+        <button class="primary" id="rollBtn">ROLL</button>
+        <button class="secondary" id="completeBtn" title="Mark trick as completed">Mark Done</button>
+      </div>
+
+      <div style="width:100%;display:flex;gap:10px;align-items:center">
+        <div style="flex:1">
+          <div style="font-size:12px;margin-bottom:6px">Progress (current mode)</div>
+          <div class="progress">
+            <div class="bar"><i id="progressFill" style="width:0%"></i></div>
+            <div style="min-width:42px;text-align:right;font-weight:700" id="progressText">0/4</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:100%;margin-top:8px">
+        <div style="display:flex;align-items:center;justify-content:space-between">
+          <div style="font-size:13px">Hard meter</div>
+          <div id="meterLabel" style="font-weight:700">—</div>
+        </div>
+        <div class="meter"><i id="meterBar" style="width:0%"></i></div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- right panel -->
+  <section class="content">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div style="font-weight:800;font-size:15px">Trick library</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.6)">Tap a trick to read details. Click "Mark Done" after you land it.</div>
+    </div>
+
+    <div id="tricksList"></div>
+
+    <div style="margin-top:10px">
+      <div style="font-weight:700;margin-bottom:6px">Completed summary</div>
+      <div style="display:flex;gap:8px">
+        <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);flex:1">
+          <div style="font-size:13px;color:rgba(255,255,255,0.6)">Easy completed</div>
+          <div id="sumEasy" style="font-weight:800;font-size:18px">0</div>
+        </div>
+        <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);flex:1">
+          <div style="font-size:13px;color:rgba(255,255,255,0.6)">Medium completed</div>
+          <div id="sumMedium" style="font-weight:800;font-size:18px">0</div>
+        </div>
+        <div style="padding:10px;border-radius:10px;background:rgba(255,255,255,0.02);flex:1">
+          <div style="font-size:13px;color:rgba(255,255,255,0.6)">Hard completed</div>
+          <div id="sumHard" style="font-weight:800;font-size:18px">0</div>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+</main>
+
+<footer>
+  <div>Made with 🎯 by Andrei Kendama Tricks — colorful, animated, and persistent.</div>
+  <div style="opacity:0.8">Tip: Use the <a class="small" href="#" id="reset">Reset Progress</a></div>
+</footer>
+
+<script>
+/*
+  Andrei Kendama Tricks - Single file app
+  - Save as index.html and open in browser.
+  - Progress is saved in localStorage under 'ak_tricks'
+*/
+
+const DATA = {
+  easy:[
+    { id:'e1', name:'Big Cup', difficulty:1, desc:'Catch the tama on the big cup.', steps:['Grip ken near the base.','Toss tama upward.','Guide ken under tama.','Absorb impact.'] },
+    { id:'e2', name:'Small Cup', difficulty:1, desc:'Catch the tama on the small cup.', steps:['Hold ken upright.','Pop tama higher than Big Cup.','Catch in small cup.','Keep steady.'] },
+    { id:'e3', name:'Base Cup', difficulty:1, desc:'Catch the tama on the base cup.', steps:['Hold ken sideways.','Toss tama gently.','Catch in base cup.','Balance firmly.'] },
+    { id:'e4', name:'Airplane', difficulty:1, desc:'Spike while holding tama.', steps:['Hold tama.','Toss ken spike upward.','Guide spike into hole.','Catch steady.'] },
+    { id:'e5', name:'Swing to Spike', difficulty:1, desc:'Swing tama directly to spike.', steps:['Swing tama forward.','Aim spike under hole.','Catch softly.','Control wrist.'] },
+    { id:'e6', name:'Around the Block', difficulty:1, desc:'Cycle through cups in order.', steps:['Catch in Big Cup.','Move to Small Cup.','Move to Base Cup.','Return to Big Cup.'] },
+    { id:'e7', name:'Earth Turn', difficulty:1, desc:'Flip tama before spiking.', steps:['Hold ken spike up.','Toss tama straight.','Rotate tama once.','Spike cleanly.'] },
+    { id:'e8', name:'Around the World', difficulty:1, desc:'Cup cycle into spike.', steps:['Big Cup.','Small Cup.','Base Cup.','Spike finish.'] },
+    { id:'e9', name:'Underbird', difficulty:1, desc:'Balance tama under ken.', steps:['Hold ken steady.','Swing tama under.','Catch on base rim.','Balance briefly.'] },
+    { id:'e10', name:'Tap Spike', difficulty:1, desc:'Tap tama into spike hole.', steps:['Hold tama in cup.','Tap lightly.','Guide spike in.','Steady.'] },
+    { id:'e11', name:'Around Europe', difficulty:1, desc:'Cup cycle variation.', steps:['Base Cup.','Big Cup.','Small Cup.','Spike.'] },
+    { id:'e12', name:'Pull Up Spike', difficulty:1, desc:'Pull tama straight into spike.', steps:['Hold ken spike up.','Pull tama upward.','Catch hole on spike.','Absorb impact.'] },
+    { id:'e13', name:'Swing Big Cup', difficulty:1, desc:'Swing tama into big cup.', steps:['Swing tama.','Arc under ken.','Land in big cup.','Balance.'] },
+    { id:'e14', name:'Swing Small Cup', difficulty:1, desc:'Swing tama into small cup.', steps:['Swing tama.','Aim small cup.','Catch.','Steady hand.'] },
+    { id:'e15', name:'Swing Base Cup', difficulty:1, desc:'Swing tama into base cup.', steps:['Swing tama.','Aim base cup.','Catch.','Balance.'] },
+    { id:'e16', name:'Orbit', difficulty:1, desc:'Circle tama around ken.', steps:['Hold ken firm.','Swing tama in circle.','Land in cup.','Finish steady.'] },
+    { id:'e17', name:'Penguin Spike', difficulty:1, desc:'Reverse grip spike.', steps:['Hold ken upside down.','Toss tama up.','Spike from reverse grip.','Catch clean.'] },
+    { id:'e18', name:'Candle Grip', difficulty:1, desc:'Hold tama, ken spike down.', steps:['Hold tama in palm.','Point spike down.','Catch ken into hole.','Balance.'] },
+    { id:'e19', name:'Ring Stall', difficulty:1, desc:'Balance tama on ring edge.', steps:['Hold ken steady.','Pop tama lightly.','Land on ring edge.','Control balance.'] },
+    { id:'e20', name:'Orbit to Spike', difficulty:1, desc:'Circle tama then spike.', steps:['Orbit tama.','Swing upward.','Spike directly.','Catch firm.'] }
+  ],
+  medium:[
+    { id:'m1', name:'Lunar', difficulty:2, desc:'Balance ken on tama.', steps:['Hold tama.','Pop ken onto tama.','Base rests flat.','Balance 3 sec.'] },
+    { id:'m2', name:'Stilt', difficulty:2, desc:'Ken sideways on tama.', steps:['Hold tama.','Flip ken sideways.','Balance handle on tama.','Control.'] },
+    { id:'m3', name:'Wing Stall', difficulty:2, desc:'Catch tama on ken wing.', steps:['Toss tama.','Guide wing under.','Land gently.','Hold balance.'] },
+    { id:'m4', name:'Airplane Flip', difficulty:2, desc:'Airplane with ken flip.', steps:['Hold tama.','Toss ken.','Flip once.','Spike.'] },
+    { id:'m5', name:'Ken Flip', difficulty:2, desc:'Flip ken before spike.', steps:['Hold tama.','Toss ken with flip.','Guide spike.','Catch.'] },
+    { id:'m6', name:'Handle Stall', difficulty:2, desc:'Balance tama on handle.', steps:['Hold ken.','Toss tama.','Rest on handle edge.','Balance.'] },
+    { id:'m7', name:'Gunslinger', difficulty:2, desc:'Ken spins around finger.', steps:['Hook ken.','Spin full circle.','Catch tama spike.','Control.'] },
+    { id:'m8', name:'Inward Airplane', difficulty:2, desc:'Airplane inward spin.', steps:['Hold tama.','Swing ken inward.','Spike hole.','Catch soft.'] },
+    { id:'m9', name:'Base Cup Flip', difficulty:2, desc:'Flip tama into base cup.', steps:['Hold ken.','Toss tama.','Flip once.','Catch base cup.'] },
+    { id:'m10', name:'Bird', difficulty:2, desc:'Tama balances on rim.', steps:['Hold ken tilt.','Toss tama.','Catch on rim.','Hold.'] },
+    { id:'m11', name:'Candlestick', difficulty:2, desc:'Ken enters tama hole.', steps:['Hold tama.','Hole up.','Insert ken.','Balance.'] },
+    { id:'m12', name:'Orbit Lunar', difficulty:2, desc:'Orbit tama then lunar.', steps:['Swing tama.','Orbit around.','Land ken on tama.','Balance.'] },
+    { id:'m13', name:'Nightingale', difficulty:2, desc:'Tama balances on cup rim inward.', steps:['Tilt ken inward.','Toss tama.','Catch on rim.','Balance.'] },
+    { id:'m14', name:'Base Cup to Spike', difficulty:2, desc:'Combo from base cup.', steps:['Catch in base.','Pop upward.','Spike hole.','Catch.'] },
+    { id:'m15', name:'Airplane Double Flip', difficulty:2, desc:'Ken flips twice.', steps:['Hold tama.','Toss ken.','Flip twice.','Spike hole.'] },
+    { id:'m16', name:'Orbit Spike', difficulty:2, desc:'Orbit then spike.', steps:['Swing orbit.','Toss upward.','Spike clean.','Control wrist.'] },
+    { id:'m17', name:'Big Cup to Lunar', difficulty:2, desc:'Combo into lunar.', steps:['Catch big cup.','Toss upward.','Land ken on tama.','Balance.'] },
+    { id:'m18', name:'Swap Grip Spike', difficulty:2, desc:'Change grip mid trick.', steps:['Hold ken.','Toss tama.','Swap grip.','Spike clean.'] },
+    { id:'m19', name:'Ken Tornado', difficulty:2, desc:'Spin ken while catching.', steps:['Grip ken.','Spin full.','Catch tama.','Finish.'] },
+    { id:'m20', name:'Airplane Orbit', difficulty:2, desc:'Orbit into airplane.', steps:['Orbit tama.','Swing upward.','Spike airplane.','Catch steady.'] }
+  ],
+  hard:[
+    { id:'h1', name:'Lighthouse', difficulty:3, desc:'Ken balances on tama.', steps:['Hold tama.','Pop ken on.','Balance base.','Hold 3 sec.'] },
+    { id:'h2', name:'Double Lunar Flip', difficulty:3, desc:'Two flips before lunar.', steps:['Toss ken.','Flip twice.','Land base on tama.','Balance.'] },
+    { id:'h3', name:'Inward Lunar', difficulty:3, desc:'Ken flips inward lunar.', steps:['Swing inward.','Flip ken.','Catch base.','Balance.'] },
+    { id:'h4', name:'Bird Over Valley', difficulty:3, desc:'Advanced bird stall.', steps:['Tilt ken.','Catch tama.','Balance over valley.','Hold steady.'] },
+    { id:'h5', name:'Border Balance', difficulty:3, desc:'Ken horizontal on tama.', steps:['Hold tama.','Flip ken sideways.','Balance on tama edge.','Control.'] },
+    { id:'h6', name:'Triple Airplane', difficulty:3, desc:'Airplane with 3 flips.', steps:['Hold tama.','Toss ken.','Flip three times.','Spike hole.'] },
+    { id:'h7', name:'Juggle to Spike', difficulty:3, desc:'Juggle ken then spike.', steps:['Toss ken.','Catch juggle.','Spike tama.','Finish.'] },
+    { id:'h8', name:'Spacewalk', difficulty:3, desc:'Swing ken around body.', steps:['Swing ken wide.','Toss tama.','Spike return.','Catch.'] },
+    { id:'h9', name:'Birdhouse Uno', difficulty:3, desc:'Combo stalls and spike.', steps:['Bird stall.','Cup transition.','Spike finish.','Smooth flow.'] },
+    { id:'h10', name:'Rainbow Flip', difficulty:3, desc:'Ken arc flip spike.', steps:['Arc toss.','Flip ken.','Spike tama.','Catch.'] },
+    { id:'h11', name:'Triple Stall', difficulty:3, desc:'Three stalls in a row.', steps:['Bird.','Wing.','Handle.','Finish.'] },
+    { id:'h12', name:'Ken Flip Combo', difficulty:3, desc:'Two ken flips to spike.', steps:['Toss ken.','Flip twice.','Spike tama.','Catch.'] },
+    { id:'h13', name:'Orbit Lighthouse', difficulty:3, desc:'Orbit into lighthouse.', steps:['Orbit tama.','Toss ken.','Land on tama.','Balance.'] },
+    { id:'h14', name:'Stilt Flip', difficulty:3, desc:'Flip ken into stilt.', steps:['Hold tama.','Flip ken.','Balance sideways.','Hold.'] },
+    { id:'h15', name:'Ken Juggle', difficulty:3, desc:'Toss and juggle ken.', steps:['Toss ken.','Catch quickly.','Repeat.','Spike finish.'] },
+    { id:'h16', name:'Bird Orbit', difficulty:3, desc:'Bird stall orbit.', steps:['Catch bird.','Orbit tama.','Land again.','Balance.'] },
+    { id:'h17', name:'Tap Lunar', difficulty:3, desc:'Tap tama before lunar.', steps:['Tap tama.','Pop ken.','Land lunar.','Balance.'] },
+    { id:'h18', name:'Flip Spacewalk', difficulty:3, desc:'Flip while spacewalking.', steps:['Swing ken.','Flip midair.','Spike finish.','Catch.'] },
+    { id:'h19', name:'Candle Juggle', difficulty:3, desc:'Juggle into candlestick.', steps:['Hold tama.','Juggle ken.','Insert ken into hole.','Balance.'] },
+    { id:'h20', name:'Moon Landing', difficulty:3, desc:'Advanced lunar combo.', steps:['Toss ken.','Flip once.','Catch on tama top.','Balance long.'] }
+  ]
+};
+
+
+// app state & persistence
+const STORAGE_KEY = 'ak_tricks_v1';
+let state = {
+  activeMode: 'easy', // easy | medium | hard
+  completed: { easy:[], medium:[], hard:[] }, // arrays of trick ids
+  lastRolled: null
+};
+
+function loadState(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw) {
+    try { const parsed = JSON.parse(raw); state = {...state, ...parsed}; }
+    catch(e){ console.warn('failed parse state',e); }
+  }
+}
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+/* UI helpers */
+const el = id => document.getElementById(id);
+const modeButtons = { easy: el('btn-easy'), medium: el('btn-medium'), hard: el('btn-hard') };
+const wheel = el('wheel'), rolledText = el('rolledText'), rollBtn = el('rollBtn'), completeBtn = el('completeBtn');
+const progressFill = el('progressFill'), progressText = el('progressText');
+const meterBar = el('meterBar'), meterLabel = el('meterLabel');
+const tricksList = el('tricksList');
+const sumEasy = el('sumEasy'), sumMedium = el('sumMedium'), sumHard = el('sumHard');
+const confettiCanvas = document.getElementById('confetti');
+
+loadState();
+renderModeButtons();
+renderTrickList();
+updateSummary();
+updateProgressUI();
+
+function renderModeButtons(){
+  // set classes & lock logic:
+  const easyUnlocked = true;
+  const mediumUnlocked = (state.completed.easy.length >= 4);
+  const hardUnlocked = (state.completed.medium.length >= 4);
+
+  modeButtons.easy.classList.remove('locked'); modeButtons.medium.classList.toggle('locked', !mediumUnlocked);
+  modeButtons.hard.classList.toggle('locked', !hardUnlocked);
+
+  // active styles
+  Object.keys(modeButtons).forEach(m=>{
+    modeButtons[m].style.boxShadow = (state.activeMode===m)?'0 10px 28px rgba(0,0,0,0.5)':'none';
+    modeButtons[m].style.transform = (state.activeMode===m)?'translateY(-2px)':'none';
+  });
+
+  modeButtons.easy.onclick = ()=> setMode('easy');
+  modeButtons.medium.onclick = ()=> { if(mediumUnlocked) setMode('medium'); else pulseLock('medium'); };
+  modeButtons.hard.onclick = ()=> { if(hardUnlocked) setMode('hard'); else pulseLock('hard'); };
+}
+
+function pulseLock(mode){
+  const btn = modeButtons[mode];
+  btn.classList.add('pulse');
+  setTimeout(()=>btn.classList.remove('pulse'), 800);
+  // small notice
+  rolledText.innerText = (mode==='medium')? 'Unlock Medium: complete 4 Easy' : 'Unlock Hard: complete 4 Medium';
+}
+
+function setMode(m){
+  state.activeMode = m;
+  saveState();
+  renderModeButtons();
+  renderTrickList();
+  updateProgressUI();
+  rolledText.innerText = '—';
+  state.lastRolled = null;
+}
+
+function getTricksForMode(mode){
+  if(mode==='easy') return DATA.easy;
+  if(mode==='medium') return DATA.medium;
+  return DATA.hard;
+}
+
+function renderTrickList(){
+  tricksList.innerHTML = '';
+  const mode = state.activeMode;
+  const list = getTricksForMode(mode);
+  list.forEach(t=>{
+    const card = document.createElement('div');
+    card.className = 'trick-card ' + (t.difficulty===1?'accent-easy':t.difficulty===2?'accent-medium':'accent-hard');
+    card.innerHTML = `
+      <div class="icon" aria-hidden="true">${t.name.split(' ').map(s=>s[0]).slice(0,2).join('')}</div>
+      <div class="meta">
+        <h3>${t.name} <span style="font-size:12px;color:rgba(255,255,255,0.6);font-weight:600"> — ${t.desc}</span></h3>
+        <div style="margin-top:6px;font-size:13px;color:rgba(255,255,255,0.8)">${shortSteps(t.steps)}</div>
+        <div class="steps" style="display:none"><ol>${t.steps.map(s=>`<li>${s}</li>`).join('')}</ol></div>
+      </div>
+      <div class="actions">
+        <button class="secondary" data-id="${t.id}" data-mode="${mode}">Details</button>
+        <button class="primary" data-id="${t.id}" data-mode="${mode}" style="padding:8px 10px;font-size:13px">Mark Done</button>
+      </div>
+    `;
+    const detailsBtn = card.querySelector('.secondary');
+    const doneBtn = card.querySelector('.primary');
+
+    detailsBtn.onclick = (ev)=>{
+      ev.preventDefault();
+      const stepsDiv = card.querySelector('.steps');
+      stepsDiv.style.display = stepsDiv.style.display==='none'?'block':'none';
+      // toggle roll highlight
+      card.classList.toggle('pulse');
+      setTimeout(()=>card.classList.remove('pulse'),600);
+    };
+
+    doneBtn.onclick = (ev)=>{
+      ev.preventDefault();
+      markCompleted(mode, t.id, t);
+    };
+
+    tricksList.appendChild(card);
+  });
+}
+
+function shortSteps(steps){
+  return steps.slice(0,2).join(' · ') + (steps.length>2? ' ...':'');
+}
+
+function markCompleted(mode, id, trick){
+  if(!state.completed[mode].includes(id)){
+    state.completed[mode].push(id);
+    saveState();
+    updateSummary();
+    updateProgressUI();
+    // show a brief success
+    rolledText.innerText = `Completed ${trick.name} ✓`;
+    // if this completion unlocked next mode, animate unlock
+    if(mode==='easy' && state.completed.easy.length===4) { unlockAnimation('medium'); }
+    if(mode==='medium' && state.completed.medium.length===4) { unlockAnimation('hard'); }
+    renderModeButtons();
+    renderTrickList();
+  } else {
+    rolledText.innerText = `Already completed ${trick.name}`;
+  }
+}
+
+function updateSummary(){
+  sumEasy.innerText = state.completed.easy.length;
+  sumMedium.innerText = state.completed.medium.length;
+  sumHard.innerText = state.completed.hard.length;
+}
+
+function updateProgressUI(){
+  const m = state.activeMode;
+  const done = state.completed[m].length;
+  progressText.innerText = `${done}/4`;
+  const pct = Math.min(100, (done/4)*100);
+  progressFill.style.width = pct + '%';
+}
+
+function rollRandom(){
+  const mode = state.activeMode;
+  const list = getTricksForMode(mode);
+  // random index with weighted difficulty (all equal here)
+  const idx = Math.floor(Math.random()*list.length);
+  const trick = list[idx];
+  // register animation
+  animateWheelThenReveal(trick);
+}
+
+function animateWheelThenReveal(trick){
+  rollBtn.disabled = true;
+  rollBtn.innerText = 'Rolling...';
+  // spin visual: rotate wheel and animate needle jitter
+  wheel.style.transition = 'transform 1.2s cubic-bezier(.22,.9,.2,1)';
+  const spins = 6 + Math.floor(Math.random()*4);
+  const angle = spins*360 + Math.floor(Math.random()*360);
+  wheel.style.transform = `rotate(${angle}deg)`;
+  // animate needle
+  const needle = document.getElementById('needle');
+  needle.classList.add('spin');
+  setTimeout(()=>{
+    wheel.style.transition = '';
+    wheel.style.transform = '';
+    needle.classList.remove('spin');
+    // reveal
+    showTrick(trick);
+    rollBtn.disabled = false;
+    rollBtn.innerText = 'ROLL';
+  }, 1200);
+}
+
+function showTrick(trick){
+  state.lastRolled = trick.id;
+  rolledText.innerText = trick.name;
+  // update meter
+  const meterPct = (trick.difficulty/3)*100;
+  meterBar.style.width = (meterPct) + '%';
+  meterLabel.innerText = (trick.difficulty===1)?'Easy':(trick.difficulty===2)?'Medium':'Hard';
+  // adjust meter color gently
+  meterBar.style.background = (trick.difficulty===1)?'linear-gradient(90deg,#34d399,#10b981)':
+    (trick.difficulty===2)?'linear-gradient(90deg,#fb923c,#f97316)':
+    'linear-gradient(90deg,#f87171,#ef4444)';
+
+  // show trick details in right panel by scrolling to the trick
+  // highlight the trick card UI
+  const cards = Array.from(document.querySelectorAll('.trick-card'));
+  cards.forEach(c=>c.style.opacity='0.9');
+  const targetCard = cards.find(c => c.querySelector('[data-id="'+trick.id+'"]'));
+  if(targetCard){
+    targetCard.style.opacity='1'; targetCard.classList.add('pulse');
+    setTimeout(()=>targetCard.classList.remove('pulse'),900);
+  }
+}
+
+// roll button
+rollBtn.onclick = () => {
+  // if the active mode is locked, pulse
+  if(state.activeMode==='medium' && state.completed.easy.length < 4) { pulseLock('medium'); return; }
+  if(state.activeMode==='hard' && state.completed.medium.length < 4) { pulseLock('hard'); return; }
+  rollRandom();
+};
+
+// complete button marks last rolled as done (shortcut)
+completeBtn.onclick = ()=>{
+  if(!state.lastRolled){
+    rolledText.innerText = 'Roll first to choose a trick';
+    return;
+  }
+  const mode = state.activeMode;
+  // find trick details
+  const trick = getTricksForMode(mode).find(t=>t.id===state.lastRolled);
+  if(trick) markCompleted(mode, trick.id, trick);
+};
+
+// unlocking animation (confetti) + popup message
+function unlockAnimation(nextMode){
+  // show confetti
+  confettiCanvas.style.display = 'block';
+  runConfetti(confettiCanvas);
+  // small text
+  rolledText.innerText = `${nextMode.toUpperCase()} unlocked!`;
+  // briefly flash the button
+  const btn = modeButtons[nextMode];
+  btn.classList.remove('locked');
+  btn.style.transform = 'scale(1.06)';
+  setTimeout(()=>{
+    btn.style.transform = '';
+    confettiCanvas.style.display='none';
+    stopConfetti();
+  }, 2000);
+}
+
+// confetti implementation (lightweight)
+let confettiTimer = null;
+function runConfetti(canvas){
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth; canvas.height = window.innerHeight;
+  const pieces = [];
+  for(let i=0;i<120;i++){
+    pieces.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height - canvas.height,
+      w: 6 + Math.random()*8,
+      h: 6 + Math.random()*8,
+      vx: -1 + Math.random()*2,
+      vy: 2 + Math.random()*4,
+      rot: Math.random()*360,
+      speedRot: -6 + Math.random()*12,
+      color: ['#34d399','#fb923c','#f87171','#60a5fa','#f472b6'][Math.floor(Math.random()*5)]
+    });
+  }
+  function frame(){
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    for(const p of pieces){
+      p.x += p.vx; p.y += p.vy; p.rot += p.speedRot;
+      ctx.save();
+      ctx.translate(p.x,p.y);
+      ctx.rotate(p.rot*Math.PI/180);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h);
+      ctx.restore();
+    }
+    // drop some pieces if off-screen
+    for(const p of pieces){
+      if(p.y > canvas.height + 50){ p.y = -20; p.x = Math.random()*canvas.width; }
+    }
+  }
+  confettiTimer = setInterval(frame, 20);
+}
+
+function stopConfetti(){
+  if(confettiTimer){ clearInterval(confettiTimer); confettiTimer = null; }
+  if(confettiCanvas){ 
+    const ctx = confettiCanvas.getContext('2d'); ctx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+    confettiCanvas.style.display='none';
+  }
+}
+
+// reset link
+el('reset').onclick = (e)=>{ e.preventDefault(); if(confirm('Reset progress?')){ localStorage.removeItem(STORAGE_KEY); state = { activeMode:'easy', completed:{easy:[],medium:[],hard:[]}, lastRolled:null }; saveState(); renderModeButtons(); renderTrickList(); updateSummary(); updateProgressUI(); rolledText.innerText='—'; } };
+
+// initial choose active
+setMode(state.activeMode);
+
+// small accessibility: keyboard roll with space
+document.addEventListener('keydown', (e)=>{
+  if(e.code==='Space') { e.preventDefault(); rollBtn.click(); }
+});
+
+</script>
+</body>
+</html>
+
+
